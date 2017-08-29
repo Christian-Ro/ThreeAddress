@@ -1,7 +1,5 @@
-// Three Address Code Assignment.cpp : Defines the entry point for the console application.
-//
+// Three Address Code.cpp
 
-#include "stdafx.h"
 #include "string"
 #include "iomanip"
 #include "vector"
@@ -10,6 +8,7 @@
 #include "iostream"
 #include "algorithm"
 using namespace std;
+
 void program(vector<string>& list);
 void stmt_list(vector<string>& list);
 void stmt(vector<string>& list);
@@ -22,64 +21,77 @@ void quad(string operation, string operand1, string operand2, string result);
 void quad(string operation, string operand1, string operand2);
 string alloc();
 
-std::vector<std::string> myLines;
-std::vector<std::string> tempStmt;
+vector<string> myLines;
+vector<string> tempStmt;
 int alloCount = 0;
 int pos = 0;
 
+/***************************************************
+	Gets the words from a file and stores them 
+	into vector string
+****************************************************/
+int main(){
 
-int main()
-{
 	string myfile,lines;
 	cout << "File path: ";
 	getline(cin, myfile);
 	ifstream file(myfile);
 	
-
-	while (std::getline(file, lines)) {
+	while (getline(file, lines)) {
 		myLines.push_back(lines);
 	}
 
 	program(myLines);
-	//cout << myLines[myLines.size() - 3] << endl;
+	//cout << myLines[myLines.size()-1] << endl;
     return 0;
 }
 
-//program -> program Stmt_list end . end
+/***************************************************
+	program -> program Stmt_list end . end
+****************************************************/
 void program(vector<string>& list) {
 
 	//check to see if it is a program file
 	if (list[1] == "program" && list[list.size() - 3] == "end") {
-		list.erase(list.begin(), list.begin() + 2);
-		list.erase(list.end() - 4, list.end());
+		list.erase(list.begin(), list.begin() + 2);	//Erease the first two words from the file. (Program, Program). Starts from nest.
+		list.erase(list.end() - 4, list.end());	//Erease the last three words including the period at the end. (PERIOD, ., end, end). Ends at SEMICOLON.
 	}
-	
-	//move to stmt_list function
+
+	//Start of the stmt_list function
 	stmt_list(list);
 }
 
-//stmt_list -> stmt ; stmt_list
+/***************************************************
+	This function is to get many statements 
+	at the same time. For right now we 
+	only focus on one statement per file.
+
+	//stmt_list -> stmt ; stmt_list
+
+****************************************************/
 void stmt_list(vector<string>& list) {
 
 	//vector<string> list2;
 	int front = 0, back = 0;
 
+	//This for loop is to get the end of each statement which will end with ";", but for right now we only have one statement per file.
 	for (int i = 0; i < list.size(); i++) {
 		if (list[i] == "SEMICOLON") {
 			back = i;
-			std::vector<string> list2(list.begin() + front, list.begin() + back);
+			vector<string> list2(list.begin() + front, list.begin() + back);	//Deletes the identifier "SEMICOLON", we are left with ";"
 			stmt(list2);
 			front = back;
-			//break;	//delete when we get everything working
 		}
 		else {
-			//cout << list[14] << endl;
+			//Let the loop run until it finds the SEMICOLON
 		}	
 	}
 	
 }
 
-//stmt -> id = expr {mov}
+/***************************************************
+	//stmt -> id = expr {mov}
+****************************************************/
 void stmt(vector<string>& list) {
 
 	
@@ -88,18 +100,20 @@ void stmt(vector<string>& list) {
 	string p;
 	string mov = "MOV";
 
-	if (list[1] == "ID" && list[2] == "=") {
-		list.erase(list.begin(), list.begin() + 4);
+	if (list[1] == "ID" && list[2] == "=") {	//CHeck if to see if there is an identifier before the assign operator
+		list.erase(list.begin(), list.begin() + 4);	//This is to delete the word "SEMICOLON" and "ASSIGNMENT" identifiers, just be left with the expression that ends at ";".
 		tempStmt = list;
 		expr(p);
-		quad("mov", st1, p);
+		quad(mov, st1, p);
 	}
 	else {
 		cout << "Error in stmt" << endl;
 	}
 }
 
-//expr -> term moreterms
+/***************************************************
+	expr -> term moreterms
+****************************************************/
 void expr(string &p) {
 
 	string q;
@@ -114,6 +128,9 @@ void expr(string &p) {
 	
 }
 
+/***************************************************
+	Term function
+****************************************************/
 void term(string &p) {
 
 	string q;
@@ -127,7 +144,9 @@ void term(string &p) {
 	}
 }
 
-//Elist
+/***************************************************
+	Elist
+****************************************************/
 void moreterms(string p, string &q) {
 	string r, s;
 
@@ -156,6 +175,10 @@ void moreterms(string p, string &q) {
 	}
 }
 
+/***************************************************
+	Factor function
+
+****************************************************/
 void factor(string &p) {
 
 	if (tempStmt[pos] == "(") {
@@ -179,7 +202,9 @@ void factor(string &p) {
 	}
 }
 
-//Tlist
+/***************************************************
+Tlist
+****************************************************/
 void morefactors(string p, string &q) {
 
 	string r, s;
@@ -226,8 +251,9 @@ void morefactors(string p, string &q) {
 	}
 }
 
-
-//make quad function
+/***************************************************
+make quad function
+****************************************************/
 void quad(string operation, string operand1, string operand2, string result) {
 	cout << operation << " " << operand1 << " " << operand2 << " " << result << "\n" << endl;
 }
@@ -236,7 +262,9 @@ void quad(string operation, string operand1, string operand2) {
 	cout << operation << " " << operand1 << " " << operand2 << "\n" << endl;
 }
 
+/***************************************************
 //make allocator function
+****************************************************/
 string alloc() {
 
 	string t = "t";

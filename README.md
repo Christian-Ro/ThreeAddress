@@ -1,9 +1,13 @@
 # ThreeAddress
 Makes a file into 3ac  
 gets a txt file with statements and
-converts them into three address code format. 
+converts them into three address code format.
+The style of the file must be the same as the one below.
+The file must start with program follow by an idetenfier, in 
+this case program again. It must also end with a period followed 
+by the idenfier. 
 
-#Ex.
+# Example file.
 ```
 program
 program
@@ -28,7 +32,7 @@ end
 .
 PERIOD
 ```  
-#Which translate to:
+# Example of the output:
 ```
 Add source data t1
 Sub t1     res  t2
